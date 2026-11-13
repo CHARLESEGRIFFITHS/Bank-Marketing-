@@ -1,46 +1,57 @@
-# Bank-Marketing-
-source: https://archive.ics.uci.edu/ml/datasets/bank+marketing
-Abstract: The data is related with direct marketing campaigns (phone calls) of a Portuguese banking institution. The classification goal is to predict if the client will subscribe a term deposit (variable y).  
-Data Set Information: The data is related with direct marketing campaigns of a Portuguese banking institution. The marketing campaigns were based on phone calls. Often, more than one contact to the same client was required, in order to access if the product (bank term deposit) would be ('yes') or not ('no') subscribed.
-Bank client data:
-Age (numeric)
-Job : type of job (categorical: 'admin.', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired', 'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown')
-Marital : marital status (categorical: 'divorced', 'married', 'single', 'unknown' ; note: 'divorced' means divorced or widowed)
-Education (categorical: 'basic.4y', 'basic.6y', 'basic.9y', 'high.school', 'illiterate', 'professional.course', 'university.degree', 'unknown')
-Default: has credit in default? (categorical: 'no', 'yes', 'unknown')
-Housing: has housing loan? (categorical: 'no', 'yes', 'unknown')
-Loan: has personal loan? (categorical: 'no', 'yes', 'unknown')
-Related with the last contact of the current campaign:
-Contact: contact communication type (categorical:
-'cellular','telephone')
-Month: last contact month of year (categorical: 'jan', 'feb', 'mar',
-…, 'nov', 'dec')
-Day_of_week: last contact day of the week (categorical:
-'mon','tue','wed','thu','fri')
-Duration: last contact duration, in seconds (numeric). Important
-note: this attribute highly affects the output target (e.g., if
-duration=0 then y='no'). Yet, the duration is not known before a call
-is performed. Also, after the end of the call y is obviously known.
-Thus, this input should only be included for benchmark purposes and
-should be discarded if the intention is to have a realistic
-predictive model.
-Other attributes:
-Campaign: number of contacts performed during this campaign and for
-this client (numeric, includes last contact)
-Pdays: number of days that passed by after the client was last
-contacted from a previous campaign (numeric; 999 means client was not
-previously contacted)
-Previous: number of contacts performed before this campaign and for
-this client (numeric)
-Poutcome: outcome of the previous marketing campaign (categorical:
-'failure','nonexistent','success')
-Social and economic context attributes
-Emp.var.rate: employment variation rate - quarterly indicator
-(numeric)
-Cons.price.idx: consumer price index - monthly indicator (numeric)
-Cons.conf.idx: consumer confidence index - monthly indicator
-(numeric)
-Euribor3m: euribor 3 month rate - daily indicator (numeric)
-Nr.employed: number of employees - quarterly indicator (numeric)
-Output variable (desired target):
-y - has the client subscribed a term deposit? (binary: 'yes', 'no')
+# Bank Marketing — SQL Analysis
+
+A SQL analysis of the UCI Bank Marketing data: who did a Portuguese bank call, and who said yes to a term deposit?
+
+## The data
+
+UCI Machine Learning Repository — Bank Marketing (bank-additional-full). One row per client contacted by the bank's direct marketing campaign (phone calls).
+
+- **41,188 clients**
+- Columns include age, job, marital status, education, default, housing loan, personal loan, contact type, month, day of week, call duration, and the outcome: whether the client subscribed to a term deposit (`y` = yes/no)
+- **4,640 clients said yes (11.3%)**; 36,548 said no
+
+## Questions and findings
+
+**Which job types were called most?**
+admin. led with 10,422 clients, followed by blue-collar (9,254) and technician (6,743).
+
+**Which job and marital status combinations were most common?**
+Married blue-collar clients were the largest group (6,687), then married admin. (5,253) and single admin. (3,875).
+
+**How many clients had loans?**
+6,248 clients had a personal loan and 21,576 had a housing loan. The largest loan group was married blue-collar clients: 1,008 with a personal loan and 3,405 with a housing loan. (990 records have "unknown" for the loan fields.)
+
+**Which job and education combinations were most common?**
+Admin. with a university degree (5,753), then blue-collar with basic 9 years of schooling (3,623) and admin. with a high school education (3,329). A university degree was the most common education level overall (12,168 clients).
+
+**Did age matter for saying yes?**
+Barely. Clients who said yes averaged 40.9 years old, compared with 39.9 for those who said no.
+
+## How to run it
+
+Load the CSV into SQLite, then run the queries in `analysis.sql`. Note the CSV uses semicolons (`;`) between values, not commas — set the separator when you import it.
+
+In DB Browser for SQLite: File → Import → Table from CSV, choose `data/bank-additional-full.csv`, set the field separator to `;`, name the table `clients`, then open the Execute SQL tab and run `analysis.sql`.
+
+From the command line:
+
+```bash
+sqlite3 bank-marketing.db
+sqlite> .mode csv
+sqlite> .separator ;
+sqlite> .import data/bank-additional-full.csv clients
+sqlite> .read analysis.sql
+```
+
+## About this project
+
+A beginner SQL practice project. The queries started as practice drafts and were cleaned up as part of learning — the main fixes were putting every column in SELECT into GROUP BY, and moving filters on plain columns from HAVING to WHERE.
+
+## Files
+
+- `analysis.sql` — the queries, each written under the question it answers
+- `data/bank-additional-full.csv` — the full dataset (41,188 rows)
+
+## Skills
+
+SQL (SQLite) · `SELECT` · `WHERE` · `GROUP BY` · `HAVING` · `ORDER BY` · `COUNT` · `AVG`
